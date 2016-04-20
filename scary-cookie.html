@@ -193,6 +193,7 @@ the `value` attribute or explicitely calling the `save` method.
        */
      save: function() {
         this.debounce('save-cookie', function () {
+          console.log(this.name, this.value, this.expires);
           if (this.name && (this.value || this.expires === EXPIRE_NOW)) {
             document.cookie = global.escape(this.name) + '=' + global.escape(this.value) + this._prepareProperties();
           }

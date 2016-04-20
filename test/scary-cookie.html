@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>scary-cookie</title>
+
+    <script src="../../webcomponentsjs/webcomponents.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../promise-polyfill/promise-polyfill.html">
+    <link rel="import" href="../scary-cookie.html">
+  </head>
+  <body>
+    <test-fixture id="test">
+      <template>
+        <scary-cookie name="test_cookie"></scary-cookie>
+      </template>
+    </test-fixture>
+
+    <script>
+      'use strict';
+
+      function createCookie(name, value, days) {
+        var expires = '';
+        if (days) {
+          var date = new Date();
+          date.setTime(date.getTime()+(days*24*60*60*1000));
+          expires = ';expires='+date.toUTCString();
+        }
+        document.cookie = name + '=' + value + expires;
+      }
+
+      function deleteCookie(name) {
+        document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+      }
+
+      function getCookie (name) {
+        var pairs = document.cookie.split(/\s*;\s*/);
+        var map = pairs.map(function (kv) {
+          var eq = kv.indexOf('=');
+          return {
+            name: unescape(kv.slice(0, eq)),
+            value: unescape(kv.slice(eq + 1))
+          };
+        });
+        return map.filter(
+          function (kv) { return kv.name === name; }
+        )[0];
+      }
+
+      suite('<scary-cookie>', function () {
+        var elem;
+
+        suite('no-cookie tests', function () {
+          setup(function (done) {
+            deleteCookie('test_cookie');
+            window.setTimeout(function () {
+              elem = fixture('test');
+              done();
+            }, 1);
+          });
+
+          teardown(function(done) {
+            deleteCookie('test_cookie');
+            window.setTimeout(done, 1);
+          });
+
+          test('no empty cookie is set', function () {
+            var value = getCookie('test_cookie');
+            expect(value).to.not.be.ok;
+          });
+
+          test('cookie can be set', function (done) {
+            elem.value = 'test';
+            window.setTimeout(function () {
+              var cookie = getCookie('test_cookie');
+              expect(cookie).to.be.ok;
+              expect(cookie.value).to.equal('test');
+              done();
+            }, 1);
+          });
+        });
+
+        suite('existing cookie', function () {
+          setup(function (done) {
+            createCookie('test_cookie', 'test', 1);
+            window.setTimeout(function () {
+              elem = fixture('test');
+              done();
+            }, 1);
+          });
+
+          teardown(function (done) {
+            deleteCookie('test_cookie');
+            window.setTimeout(done, 1);
+          });
+
+          test('cookie has been loaded', function () {
+            expect(elem.value).to.equal('test');
+          });
+
+          test('cookie can be deleted', function (done) {
+            elem.deleteCookie();
+            window.setTimeout(function () {
+              var value = getCookie('test_cookie');
+              expect(value).to.not.be.ok;
+              done();
+            }, 1);
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
