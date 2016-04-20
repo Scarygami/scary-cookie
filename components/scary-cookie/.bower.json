@@ -1,0 +1,21 @@
+{
+  "name": "scary-cookie",
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.0.0"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "web-component-tester": "Polymer/web-component-tester#^4.0.0"
+  },
+  "homepage": "https://github.com/Scarygami/scary-cookie",
+  "_release": "18e05c7194",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "18e05c71944a2af94b96f7962877edcb15db4154"
+  },
+  "_source": "git://github.com/Scarygami/scary-cookie.git",
+  "_target": "master",
+  "_originalSource": "Scarygami/scary-cookie",
+  "_direct": true
+}
