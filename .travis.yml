@@ -1,6 +1,7 @@
-dist: trusty
 language: node_js
 node_js: stable
+dist: trusty
+sudo: required
 addons:
   firefox: latest
   sauce_connect: true
