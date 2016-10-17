@@ -10,5 +10,3 @@ the `value` attribute or explicitely calling the `save` method.
 
 ##### Example
     <scary-cookie name="mycookie"></scary-cookie>
-
-[Documentation](https://scarygami.github.io/scary-cookie/)
