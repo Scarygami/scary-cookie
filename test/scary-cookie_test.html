@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <title>scary-cookie test</title>
+
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/wct-browser-legacy/browser.js"></script>
+
+    <script type="module" src="../scary-cookie.js"></script>
+  </head>
+  <body>
+    <test-fixture id="test">
+      <template>
+        <scary-cookie name="test_cookie"></scary-cookie>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="test2">
+      <template>
+        <scary-cookie disable-auto-save name="test_cookie"></scary-cookie>
+      </template>
+    </test-fixture>
+
+    <script type="module">
+      function createCookie(name, value, days) {
+        let expires = '';
+        if (days) {
+          let date = new Date();
+          date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+          expires = ';expires=' + date.toUTCString();
+        }
+        document.cookie = name + '=' + value + expires;
+      }
+
+      function deleteCookie(name) {
+        document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+      }
+
+      function getCookie(name) {
+        const pairs = document.cookie.split(/\s*;\s*/);
+        const cookies = pairs.map(cookieString => {
+          const eq = cookieString.indexOf('=');
+          return {
+            name: unescape(cookieString.slice(0, eq)),
+            value: unescape(cookieString.slice(eq + 1))
+          };
+        });
+        return cookies.filter(cookie => (cookie.name === name))[0];
+      }
+
+      suite('<scary-cookie>',  () => {
+        var elem;
+
+        suite('no-cookie tests', () => {
+          setup((done) => {
+            deleteCookie('test_cookie');
+            window.setTimeout(() => {
+              elem = fixture('test');
+              done();
+            }, 5);
+          });
+
+          teardown((done)=>  {
+            deleteCookie('test_cookie');
+            window.setTimeout(done, 5);
+          });
+
+          test('no empty cookie is set', () => {
+            var value = getCookie('test_cookie');
+            expect(value).to.not.be.ok;
+          });
+
+          test('cookie can be set', (done) => {
+            elem.value = 'test';
+            window.setTimeout(() => {
+              const cookie = getCookie('test_cookie');
+              expect(cookie).to.be.ok;
+              expect(cookie.value).to.equal('test');
+              done();
+            }, 5);
+          });
+        });
+
+        suite('existing cookie', () => {
+          setup((done) => {
+            createCookie('test_cookie', 'test', 1);
+            window.setTimeout(() => {
+              elem = fixture('test');
+              done();
+            }, 5);
+          });
+
+          teardown((done) => {
+            deleteCookie('test_cookie');
+            window.setTimeout(done, 5);
+          });
+
+          test('cookie has been loaded', () => {
+            expect(elem.value).to.equal('test');
+          });
+
+          test('cookie can be deleted', (done) => {
+            elem.deleteCookie();
+            window.setTimeout(() => {
+              const value = getCookie('test_cookie');
+              expect(value).to.not.be.ok;
+              done();
+            }, 5);
+          });
+        });
+
+        suite('disable-auto-save tests', () => {
+          setup((done) => {
+            deleteCookie('test_cookie');
+            window.setTimeout(() => {
+              elem = fixture('test2');
+              done();
+            }, 5);
+          });
+
+          teardown((done)=>  {
+            deleteCookie('test_cookie');
+            window.setTimeout(done, 5);
+          });
+
+          test('cookie will not be saved automatically', (done) => {
+            elem.value = 'test';
+            window.setTimeout(() => {
+              const cookie = getCookie('test_cookie');
+              expect(cookie).to.not.be.ok;
+              done();
+            }, 5);
+          });
+
+          test('saving the cookie manually works', (done) => {
+            elem.value = 'test';
+            elem.save();
+            window.setTimeout(() => {
+              const cookie = getCookie('test_cookie');
+              expect(cookie).to.be.ok;
+              expect(cookie.value).to.equal('test');
+              done();
+            }, 5);
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,23 +1,21 @@
 language: node_js
-node_js: stable
-dist: trusty
-sudo: required
+sudo: 'false'
+ist: trusty
+node_js: node
 addons:
   firefox: latest
-  sauce_connect: true
-  apt:
-    sources:
-    - google-chrome
-    packages:
-    - google-chrome-stable
+  chrome: stable
 before_script:
   - npm install -g polymer-cli
   - polymer install --variants
 script:
-  - xvfb-run polymer test
+  - xvfb-run polymer test --module-resolution=node --npm
   - >-
-    if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then polymer test -s 'default';
-    fi
+    if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then polymer test
+    --module-resolution=node --npm -s 'default'; fi
+cache:
+  directories:
+    - node_modules
 env:
   global:
   - secure: 1Nw8urLSqgbmpUcUpO1CxQ4jqrpZSlQVjddsiRe92XcOoDfp4EINrgVsvCCYQDZAW0iyE3zFSGJQ6eyHOMZTR5gVlfVk9EMT8o5TMqU/d8s8zRGjWE0+0s6B5G4VVdt6RRujfktuTI+3pZd9Aa0VzsaDSafzlVvGNCEl5u5RJjfynVgycZ6RyKkRHMxycXCilrST6kjAq4BBLhqpms9XzdaK5Nw0OKG3g20BTQH4EssnGzYLsjkN2eXVlvLEWO9vi32rJ+cm/qCR1BUhRfUYtvEUXc0Bh46RK/+DdDbG7bCvellBd4Z1A3gS4XqoO0rfl1kqyBnFU3bJ1pPe3qNDhVRXNkjT+K6G4hwlG1Hu9+zYMuU/SAcry++hOs4CpXmdN5al0TY2oMAjZ3oBIub9onydYdNfIR50TLzKNNWKmVniaUHH/sbtggPI/un3MgHv6TidKWyfHrV3izzsy28js6l00ihka0DkerrQEJ2X3RnYAJ/QBKbe2o4SSYMNVTMIDDBhdqylbYEoDA1ULC4PdxnQvFUvKBXkzk+1ktB7/6O1GmivTJJgPfZ66z5BjiJN8cDI/6Rf+GTw6U9F45qujcUGYyqDgEQtB/Euqf58I/jIBVHDesZMVARDSamKrCXP8KN2d+gplN0tbSb5v+OZtSBfgckPeKBdmRjBmbAZpSY=
