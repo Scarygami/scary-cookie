@@ -7,7 +7,6 @@ addons:
   chrome: stable
 before_script:
   - npm install -g polymer-cli
-  - polymer install --variants
 script:
   - xvfb-run polymer test --module-resolution=node --npm
   - >-
